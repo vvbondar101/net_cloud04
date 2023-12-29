@@ -2,6 +2,7 @@ resource "yandex_kubernetes_cluster" "k8s-regional" {
   name = "k8s-regional"
   network_id = yandex_vpc_network.cloudvpc.id
   master {
+    public_ip = true
     regional {
       region = "ru-central1"
       location {
@@ -50,13 +51,17 @@ resource "yandex_kubernetes_node_group" "nodegroup" {
       memory = 4
       cores  = 2
     }
+    network_interface {
+      nat                = false
+      subnet_ids         = ["${yandex_vpc_subnet.publicnet01.id}"]
+    }
   }
   allocation_policy {
     location {
       zone = var.zone1a
-      subnet_id = yandex_vpc_subnet.publicnet01.id
     }
   }
+  
   scale_policy {
     auto_scale {
       min     = 3
@@ -64,4 +69,5 @@ resource "yandex_kubernetes_node_group" "nodegroup" {
       initial = 3
     }
   }
+  
 }
