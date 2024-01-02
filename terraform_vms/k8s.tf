@@ -7,15 +7,15 @@ resource "yandex_kubernetes_cluster" "k8s-regional" {
       region = "ru-central1"
       location {
         zone      = var.zone1a
-        subnet_id = yandex_vpc_subnet.publicnet01.id
+        subnet_id = yandex_vpc_subnet.k8snet01.id
       }
       location {
         zone      = var.zone1b
-        subnet_id = yandex_vpc_subnet.publicnet02.id
+        subnet_id = yandex_vpc_subnet.k8snet02.id
       }
       location {
         zone      = var.zone1d
-        subnet_id = yandex_vpc_subnet.publicnet03.id
+        subnet_id = yandex_vpc_subnet.k8snet03.id
       }
     }
     security_group_ids = [yandex_vpc_security_group.sgcloud.id]
@@ -41,6 +41,7 @@ resource "yandex_kubernetes_node_group" "nodegroup" {
     name       = "node-{instance.index}"
     platform_id = "standard-v1"
     network_acceleration_type = "standard"
+    
     container_runtime {
       type = "containerd"
     }
@@ -51,9 +52,15 @@ resource "yandex_kubernetes_node_group" "nodegroup" {
       memory = 4
       cores  = 2
     }
+    metadata = {
+    serial-port-enable = var.metadata.serial-port-enable
+    ssh-keys           = "ubuntu:${var.metadata.ssh-keys}"
+    }
     network_interface {
       nat                = false
-      subnet_ids         = ["${yandex_vpc_subnet.publicnet01.id}"]
+      subnet_ids         = ["${yandex_vpc_subnet.k8snet01.id}"]
+      security_group_ids = [yandex_vpc_security_group.sgcloud.id]
+      
     }
   }
   allocation_policy {

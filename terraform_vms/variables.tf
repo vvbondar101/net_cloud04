@@ -46,20 +46,24 @@ variable "priv2_cidr" {
   default     = ["192.168.20.0/24"]
   description = "https://cloud.yandex.ru/docs/vpc/operations/subnet-create"
 }
-
 variable "pub1_cidr" {
   type        = list(string)
   default     = ["10.10.0.0/16"]
   description = "https://cloud.yandex.ru/docs/vpc/operations/subnet-create"
 }
-variable "pub2_cidr" {
+variable "k8s1_cidr" {
   type        = list(string)
   default     = ["10.11.0.0/16"]
   description = "https://cloud.yandex.ru/docs/vpc/operations/subnet-create"
 }
-variable "pub3_cidr" {
+variable "k8s2_cidr" {
   type        = list(string)
   default     = ["10.12.0.0/16"]
+  description = "https://cloud.yandex.ru/docs/vpc/operations/subnet-create"
+}
+variable "k8s3_cidr" {
+  type        = list(string)
+  default     = ["10.13.0.0/16"]
   description = "https://cloud.yandex.ru/docs/vpc/operations/subnet-create"
 }
 variable "vpc_name" {
@@ -84,21 +88,26 @@ variable "privatenet3" {
   default     = "privnet03"
   description = "VPC network & subnet name"
 }
-
 variable "pubnet1" {
   type        = string
   default     = "pubnet01"
   description = "VPC network & subnet name"
 }
 
-variable "pubnet2" {
+variable "k8snet1" {
   type        = string
-  default     = "pubnet02"
+  default     = "k8snet01"
   description = "VPC network & subnet name"
 }
-variable "pubnet3" {
+
+variable "k8snet2" {
   type        = string
-  default     = "pubnet03"
+  default     = "k8snet02"
+  description = "VPC network & subnet name"
+}
+variable "k8snet3" {
+  type        = string
+  default     = "k8snet03"
   description = "VPC network & subnet name"
 }
 variable "sg_name" {

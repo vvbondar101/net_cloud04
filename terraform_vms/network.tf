@@ -9,6 +9,7 @@ resource "yandex_vpc_subnet" "privatenet01" {
   zone           = var.zone1a
   network_id     = yandex_vpc_network.cloudvpc.id
   v4_cidr_blocks = var.priv1_cidr
+  #route_table_id = yandex_vpc_route_table.nat-instance-route.id
 }
 
 resource "yandex_vpc_subnet" "privatenet02" {
@@ -18,25 +19,34 @@ resource "yandex_vpc_subnet" "privatenet02" {
   v4_cidr_blocks = var.priv2_cidr
 }
 
-resource "yandex_vpc_subnet" "publicnet01" {
+resource "yandex_vpc_subnet" "public01" {
   name           = var.pubnet1
   zone           = var.zone1a
   network_id     = yandex_vpc_network.cloudvpc.id
   v4_cidr_blocks = var.pub1_cidr
+  
 }
-
-resource "yandex_vpc_subnet" "publicnet02" {
-  name           = var.pubnet2
+resource "yandex_vpc_subnet" "k8snet01" {
+  name           = var.k8snet1
+  zone           = var.zone1a
+  network_id     = yandex_vpc_network.cloudvpc.id
+  v4_cidr_blocks = var.k8s1_cidr
+  route_table_id = yandex_vpc_route_table.nat-instance-route.id
+}
+resource "yandex_vpc_subnet" "k8snet02" {
+  name           = var.k8snet2
   zone           = var.zone1b
   network_id     = yandex_vpc_network.cloudvpc.id
-  v4_cidr_blocks = var.pub2_cidr
+  v4_cidr_blocks = var.k8s2_cidr
+  
 }
 
-resource "yandex_vpc_subnet" "publicnet03" {
-  name           = var.pubnet3
+resource "yandex_vpc_subnet" "k8snet03" {
+  name           = var.k8snet3
   zone           = var.zone1d
   network_id     = yandex_vpc_network.cloudvpc.id
-  v4_cidr_blocks = var.pub3_cidr
+  v4_cidr_blocks = var.k8s3_cidr
+  
 }
 resource "yandex_vpc_security_group" "sgcloud" {
   name       = var.sg_name
@@ -92,7 +102,7 @@ resource "yandex_vpc_security_group" "sgcloud" {
   ingress {
     protocol          = "ANY"
     description       = "Правило разрешает взаимодействие под-под и сервис-сервис. Укажите подсети вашего кластера Managed Service for Kubernetes и сервисов."
-    v4_cidr_blocks    = concat(yandex_vpc_subnet.publicnet01.v4_cidr_blocks, yandex_vpc_subnet.publicnet02.v4_cidr_blocks, yandex_vpc_subnet.publicnet03.v4_cidr_blocks)
+    v4_cidr_blocks    = concat(yandex_vpc_subnet.k8snet01.v4_cidr_blocks, yandex_vpc_subnet.k8snet02.v4_cidr_blocks, yandex_vpc_subnet.k8snet03.v4_cidr_blocks)
     from_port         = 0
     to_port           = 65535
   }
